@@ -47,6 +47,7 @@ const config: Config = {
       },
     },
   },
+
   plugins: [typography, animate],
 };
 
