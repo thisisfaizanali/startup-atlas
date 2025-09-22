@@ -1,3 +1,5 @@
+import { Skeleton } from '@/components/ui/skeleton';
+import View from '@/components/View';
 import { formatDate } from '@/lib/utils';
 import { client } from '@/sanity/lib/client';
 import { STARTUP_BY_ID_QUERY } from '@/sanity/lib/queries';
@@ -5,6 +7,7 @@ import markdownit from 'markdown-it';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 export const experimental_ppr = true;
 
 const md = markdownit();
@@ -70,6 +73,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
         <hr className="divider" />
         {/* Editor Selected Startups */}
+        <Suspense fallback={<Skeleton className="view_skeleton" />}>
+          <View id={id} />
+        </Suspense>
       </section>
     </>
   );
