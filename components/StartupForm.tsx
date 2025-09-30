@@ -1,7 +1,9 @@
 'use client';
+import { useToast } from '@/hooks/use-toast';
 import { formSchema } from '@/lib/validation';
 import MDEditor from '@uiw/react-md-editor';
 import { Send } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useActionState, useState } from 'react';
 import { z } from 'zod';
 import { Button } from './ui/button';
@@ -11,6 +13,9 @@ import { Textarea } from './ui/textarea';
 const StartupForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pitch, setPitch] = useState('');
+  const { toast } = useToast();
+  const router = useRouter();
+
   const handleFormSubmit = async (prevState: any, formData: FormData) => {
     try {
       const formValues = {
@@ -24,16 +29,37 @@ const StartupForm = () => {
       await formSchema.parseAsync(formValues);
 
       // const result = await createIdea(prevState, formData, pitch);
-      // console.log(result);
+      // // console.log(result);
+
+      // if (result.status == 'SUCCESS') {
+      //   toast({
+      //     title: 'Success',
+      //     description: 'Your startup pitch has been created successfully',
+      //   });
+      //   router.push(`/startup/${result.id}`);
+      // }
+
+      // return result;
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErros = error.flatten().fieldErrors;
 
         setErrors(fieldErros as unknown as Record<string, string>);
 
+        toast({
+          title: 'Error',
+          description: 'Please check your inputs and try again',
+          variant: 'destructive',
+        });
+
         return { ...prevState, error: 'Validation failed', status: 'ERROR' };
       }
 
+      toast({
+        title: 'Error',
+        description: 'An unexpected error has occurred',
+        variant: 'destructive',
+      });
       return {
         ...prevState,
         error: 'An unexpected error has occurred',
